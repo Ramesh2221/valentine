@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Valentine 💘</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff5f9e, #ff9acb, #ffc3da);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Question Card */
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255,255,255,0.96);
+  padding: 35px 45px;
+  border-radius: 22px;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+  z-index: 10;
+}
+
+h2 {
+  color: #ff2f92;
+  min-height: 100px;
+  white-space: pre-line;
+}
+
+button {
+  padding: 12px 30px;
+  font-size: 17px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+#yesBtn {
+  background: linear-gradient(135deg, #ff2f92, #ff6fb1);
+  color: white;
+}
+
+#noBtn {
+  background: #ccc;
+  position: absolute;
+}
+
+/* ❤️ Big Heart */
+.heart-center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 220px;
+  animation: beat 1.2s infinite;
+  z-index: 30;
+}
+
+@keyframes beat {
+  0%,100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.15); }
+}
+
+/* 🏹 Arrow */
+.arrow {
+  position: fixed;
+  top: 50%;
+  left: -220px;
+  width: 180px;
+  height: 8px;
+  background: white;
+  z-index: 100;
+  animation: shoot 1.2s linear forwards;
+}
+
+.arrow::after {
+  content: "";
+  position: absolute;
+  right: -18px;
+  top: -9px;
+  border-left: 18px solid white;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+}
+
+@keyframes shoot {
+  to { left: calc(50% - 140px); }
+}
+
+/* 💕 Mini Hearts (BEATING) */
+.mini-heart {
+  position: fixed;
+  font-size: 24px;
+  opacity: 0.85;
+  animation: miniBeat 1.4s infinite, fadeOut 6s ease-in forwards;
+  pointer-events: none;
+  z-index: 20;
+}
+
+@keyframes miniBeat {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; }
+}
+
+/* 💖 FINAL MESSAGE (NO ANIMATION) */
+.final {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  padding: 20px;
+  gap: 14px;
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.final h1 {
+  font-size: 38px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  animation: fadeUp 1.6s ease forwards;
+}
+
+.final p {
+  font-size: 24px;
+  font-weight: 400;
+  color: #ffe9f2;
+  margin-top: 14px;
+  line-height: 1.4;
+  animation: fadeUp 2.4s ease forwards;
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+  <h2 id="question"></h2>
+  <button id="yesBtn">Yes 💖</button>
+  <button id="noBtn">No 🙃</button>
+</div>
+
+<script>
+const herName = "Dharini";
+const finalMessage = "I want to spend every Valentine with you 💖💍";
+
+const questions = [
+  `Hey ${herName} 💕\nWill you be my Valentine? 💘`,
+  `Do you believe our love will grow stronger every day? 🌱❤️`,
+  `Will you stand by me in every situation? 🤝💖`,
+  `Will you choose us, always? 💞`
+];
+
+let step = 0;
+let scale = 1;
+
+const q = document.getElementById("question");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+
+function typeText(text) {
+  q.innerHTML = "";
+  let i = 0;
+  const t = setInterval(() => {
+    q.innerHTML += text.charAt(i);
+    i++;
+    if (i >= text.length) clearInterval(t);
+  }, 50);
+}
+
+typeText(questions[0]);
+
+noBtn.addEventListener("mouseenter", () => {
+  noBtn.style.left = Math.random() * (innerWidth - 120) + "px";
+  noBtn.style.top = Math.random() * (innerHeight - 60) + "px";
+  scale -= 0.08;
+  if (scale < 0.4) scale = 0.4;
+  noBtn.style.transform = `scale(${scale})`;
+});
+
+yesBtn.addEventListener("click", () => {
+  step++;
+  if (step < questions.length) {
+    typeText(questions[step]);
+  } else {
+    cupidScene();
+  }
+});
+
+function cupidScene() {
+  document.getElementById("card").remove();
+
+  const heart = document.createElement("div");
+  heart.className = "heart-center";
+  heart.innerText = "❤️";
+  document.body.appendChild(heart);
+
+  const arrow = document.createElement("div");
+  arrow.className = "arrow";
+  document.body.appendChild(arrow);
+
+  setTimeout(() => arrow.remove(), 1200);
+
+  setTimeout(() => {
+    heart.remove();
+    spreadMiniHearts();
+    setTimeout(showFinal, 3500);
+  }, 2000);
+}
+
+function spreadMiniHearts() {
+  for (let i = 0; i < 100; i++) {
+    const h = document.createElement("div");
+    h.className = "mini-heart";
+    h.innerText = "❤️";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.top = Math.random() * 100 + "vh";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 6000);
+  }
+}
+
+function showFinal() {
+  document.body.innerHTML = `
+    <div class="final">
+      <h1>I love you ${herName} 💖😍</h1>
+      <p>${finalMessage}</p>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
